@@ -1,0 +1,31 @@
+const MAP: Record<string, string> = {
+  Navy: "#1e2a4a",
+  Oat: "#d4c4a8",
+  Black: "#161411",
+  White: "#f4efe6",
+  Olive: "#3d4a32",
+  Ink: "#1a1c22",
+  Flax: "#cbb994",
+  Brass: "#b08d57",
+  Tan: "#c4a574",
+  Rust: "#9c4a1a",
+  Sky: "#9bb7c9",
+  Stripe: "#d8d2c8",
+  Charcoal: "#3a3a3a",
+  Sand: "#c5b49a",
+  Bone: "#e7dfd2",
+  Cedar: "#6b4a32",
+  Clay: "#b07a5c",
+  Sea: "#6a8a86",
+  Camel: "#c4a574",
+  Forest: "#2c4638",
+  Terracotta: "#b85c38",
+  Natural: "#ddd4c5",
+  Tortoise: "#6b3f24",
+  Steel: "#8a8d91",
+  Hudson: "#4a5c6a",
+};
+
+export function swatchHex(color: string) {
+  return MAP[color] || "#6f675c";
+}
