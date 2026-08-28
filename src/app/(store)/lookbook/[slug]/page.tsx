@@ -18,12 +18,11 @@ export default async function LookbookPage({ params }: { params: Promise<{ slug:
   const lb = getLookbook(slug);
   if (!lb) notFound();
   const settings = await getSettings();
-  const rows = await Promise.all(
-    lb.pieces.map(async (piece) => ({ piece, product: await getProductBySlug(piece.slug) }))
+  const rows = (await Promise.all(lb.pieces.map(async (piece) => ({ piece, product: await getProductBySlug(piece.slug) })))).filter(
+    (r): r is typeof r & { product: NonNullable<typeof r.product> } => !!r.product
   );
-  const products = rows.filter((r) => r.product);
-  const variants = products
-    .map((r) => r.product!.variants.find((v) => v.stockQty - v.reservedQty > 0) || r.product!.variants[0])
+  const variants = rows
+    .map((r) => r.product.variants.find((v) => v.stockQty - v.reservedQty > 0) || r.product.variants[0])
     .filter(Boolean)
     .map((v) => v!.id);
 
@@ -46,14 +45,12 @@ export default async function LookbookPage({ params }: { params: Promise<{ slug:
       </section>
       <div className="mx-auto max-w-catalog px-4 py-16">
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {products.map((p, i) =>
-            p ? (
-              <div key={p.id}>
-                <p className="mb-2 text-[11px] uppercase tracking-widest text-muted">{lb.pieces[i]?.note}</p>
-                <ProductCard product={toCard(p)} currency={settings.store.currency} />
-              </div>
-            ) : null
-          )}
+          {rows.map(({ piece, product: p }) => (
+            <div key={p.id}>
+              <p className="mb-2 text-[11px] uppercase tracking-widest text-muted">{piece.note}</p>
+              <ProductCard product={toCard(p)} currency={settings.store.currency} />
+            </div>
+          ))}
         </div>
       </div>
     </div>
