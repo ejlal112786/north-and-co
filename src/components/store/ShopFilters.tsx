@@ -119,7 +119,37 @@ export function ShopFilters({ categories, brands }: { categories: Cat[]; brands:
         </ul>
       </div>
       <div>
-        <p className="text-[11px] uppercase tracking-[0.18em] text-muted">Price (USD)</p>
+        <p className="text-[11px] uppercase tracking-[0.18em] text-muted">Gender</p>
+        <div className="mt-2 flex flex-wrap gap-1">
+          {GENDERS.map(([id, label]) => (
+            <button
+              type="button"
+              key={id}
+              onClick={() => set("gender", sp.get("gender") === id ? undefined : id)}
+              className={`border px-2 py-1 text-xs ${sp.get("gender") === id ? "border-ink bg-ink text-paper" : "border-line"}`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div>
+        <p className="text-[11px] uppercase tracking-[0.18em] text-muted">Style</p>
+        <div className="mt-2 flex flex-wrap gap-1">
+          {STYLES.map(([id, label]) => (
+            <button
+              type="button"
+              key={id}
+              onClick={() => set("style", sp.get("style") === id ? undefined : id)}
+              className={`border px-2 py-1 text-xs ${sp.get("style") === id ? "border-ink bg-ink text-paper" : "border-line"}`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div>
+        <p className="text-[11px] uppercase tracking-[0.18em] text-muted">Price (PKR)</p>
         <div className="mt-2 flex gap-2">
           <input name="min" defaultValue={sp.get("min") || ""} placeholder="Min" className="w-full border border-line bg-transparent px-2 py-1" />
           <input name="max" defaultValue={sp.get("max") || ""} placeholder="Max" className="w-full border border-line bg-transparent px-2 py-1" />

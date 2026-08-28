@@ -87,7 +87,7 @@ function QuickViewModal({ slug, onClose }: { slug: string; onClose: () => void }
         </div>
         <div className="p-5">
           <p className="font-serif text-2xl">{data?.name || "…"}</p>
-          {v ? <p className="mt-2">{formatMoney(v.priceCents, data.currency || "pkr")}</p> : null}
+          {v ? <p className="mt-2">{formatMoney(v.priceCents, data?.currency || "pkr")}</p> : null}
           {err ? <p className="mt-2 text-sm text-sale">{err}</p> : null}
           {data?.variants.length ? (
             <div className="mt-4 flex flex-wrap gap-2">

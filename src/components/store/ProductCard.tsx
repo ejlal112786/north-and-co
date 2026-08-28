@@ -75,6 +75,7 @@ export function ProductCard({ product, currency = "usd" }: { product: CardProduc
       </Link>
       <div className="absolute right-2 top-2 flex flex-col gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100">
         <WishlistButton slug={product.slug} />
+        <QuickViewButton slug={product.slug} />
         {product.variantId && (product.available ?? 1) > 0 ? <QuickAdd variantId={product.variantId} /> : null}
       </div>
     </article>
