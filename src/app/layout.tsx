@@ -37,6 +37,13 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
     },
     robots: { index: true, follow: true },
+    icons: {
+      icon: [
+        { url: "/favicon.ico", sizes: "48x48" },
+        { url: "/icon.png", type: "image/png", sizes: "48x48" },
+      ],
+      apple: [{ url: "/apple-icon.png", sizes: "180x180" }],
+    },
   };
 }
 

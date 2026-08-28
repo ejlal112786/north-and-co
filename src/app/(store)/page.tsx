@@ -32,7 +32,7 @@ export default async function HomePage() {
         <img
           src={hero?.image || "/images/banners/hero.jpg"}
           alt=""
-          className="absolute inset-0 h-full w-full object-cover opacity-70"
+          className="hero-zoom absolute inset-0 h-full w-full object-cover opacity-70"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/25 to-ink/30" />
         <div className="relative mx-auto flex min-h-[86vh] max-w-catalog flex-col justify-end px-4 pb-16 pt-32">
@@ -96,7 +96,9 @@ export default async function HomePage() {
       </section>
 
       <section className="mx-auto max-w-catalog px-4 py-8">
-        <h2 className="font-serif text-4xl">Shop by category</h2>
+        <Reveal>
+          <h2 className="font-serif text-4xl">Shop by category</h2>
+        </Reveal>
         <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
           {cats.map((c) => (
             <Link key={c.id} href={`/shop?category=${c.slug}`} className="group block">
@@ -132,13 +134,14 @@ export default async function HomePage() {
       ) : null}
 
       <section className="mx-auto max-w-catalog px-4 py-16">
+        <Reveal>
         <div className="flex items-end justify-between">
           <h2 className="font-serif text-4xl">Lookbooks</h2>
           <Link href="/lookbook" className="text-[12px] uppercase tracking-widest">
             All looks
           </Link>
         </div>
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
+        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {LOOKBOOKS.map((l) => (
             <Link key={l.slug} href={`/lookbook/${l.slug}`} className="group block">
               <div className="aspect-[16/10] overflow-hidden bg-bone">
@@ -150,6 +153,7 @@ export default async function HomePage() {
             </Link>
           ))}
         </div>
+        </Reveal>
       </section>
 
       <section className="mx-auto max-w-catalog px-4 py-16">
