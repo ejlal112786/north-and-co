@@ -2,9 +2,8 @@
  * Rapid Gateway Pakistan (rapidgateway.pk)
  * Hosted checkout: cards, JazzCash, easypaisa, Raast.
  *
- * Amounts sent to Rapid are PKR **major units** (whole rupees), not paisa.
- * Internally this shop still stores integer minor units (paisa).
- * Example: order.totalCents = 425000 → Rapid `amount: 4250` (Rs 4,250).
+ * Shop prices are **USD cents**. Rapid still charges **PKR whole rupees**.
+ * Convert with RAPID_PKR_PER_USD (default 280). Example: $185.00 → 51800 PKR.
  *
  * Merchant ID + Secret Key live only in env. Never sent to the browser.
  * Paid only after we re-query Rapid (webhook signature is not enough on its own).
@@ -40,15 +39,20 @@ export function rapidEnabled() {
   return Boolean(merchantId() && secretKey());
 }
 
-/** Rapid Gateway PK charges whole rupees. */
-export function rupeesFromCents(cents: number) {
-  return Math.round(cents / 100);
+export function pkrPerUsd() {
+  const n = Number(process.env.RAPID_PKR_PER_USD || "280");
+  return Number.isFinite(n) && n > 0 ? n : 280;
+}
+
+/** USD cents → whole PKR rupees for Rapid Gateway. */
+export function rupeesFromCents(usdCents: number) {
+  return Math.round((usdCents / 100) * pkrPerUsd());
 }
 
 export function amountsMatch(orderCents: number, gatewayAmount: number) {
   if (!Number.isFinite(gatewayAmount)) return false;
   const rupees = rupeesFromCents(orderCents);
-  return gatewayAmount === rupees || gatewayAmount === orderCents;
+  return gatewayAmount === rupees || gatewayAmount === rupees * 100;
 }
 
 export function toE164(phone: string) {

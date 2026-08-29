@@ -34,11 +34,11 @@ export type StoreSettings = {
 const DEFAULTS: StoreSettings = {
   store: {
     name: "NORTH & CO.",
-    tagline: "Objects for a considered life",
-    email: "samuel.w@example.com",
-    phone: "+1 (212) 555-0148",
-    address: "184 Mercer Street, New York, NY 10012",
-    currency: "pkr",
+    tagline: "Cloth for a considered life",
+    email: "spideyspider112786@gmail.com",
+    phone: "",
+    address: "",
+    currency: "usd",
     timezone: "Asia/Karachi",
     country: "PK",
     logo: "",
@@ -51,7 +51,7 @@ const DEFAULTS: StoreSettings = {
   seo: {
     title: "NORTH & CO. — Objects for a considered life",
     description:
-      "Apparel, home, and objects made to last. Guest checkout, worldwide shipping, and considered materials.",
+      "Apparel cut to last. Guest checkout, worldwide shipping, and considered materials.",
     ogImage: "/images/og.jpg",
   },
   returns: { windowDays: 30 },
@@ -72,8 +72,10 @@ export async function getSettings(): Promise<StoreSettings> {
   }
   const map = Object.fromEntries(rows.map((r) => [r.key, r.value]));
   const stored = parseJson<Record<string, unknown>>(map["payments"], {});
+  const store = { ...DEFAULTS.store, ...parseJson(map["store"], {}) };
+  if (!store.currency || String(store.currency).toLowerCase() === "pkr") store.currency = "usd";
   const merged: StoreSettings = {
-    store: { ...DEFAULTS.store, ...parseJson(map["store"], {}) },
+    store,
     payments: {
       rapidEnabled:
         rapidEnabled() &&

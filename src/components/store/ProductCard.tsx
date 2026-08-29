@@ -12,6 +12,7 @@ export type CardProduct = {
   maxPrice?: number;
   compareAt?: number | null;
   image: string;
+  imageHover?: string | null;
   avgRating?: number;
   reviewCount?: number;
   available?: number;
@@ -20,19 +21,32 @@ export type CardProduct = {
   variantId?: string;
 };
 
-export function ProductCard({ product, currency = "usd" }: { product: CardProduct; currency?: string }) {
+export function ProductCard({
+  product,
+  currency = "usd",
+  index = 0,
+}: {
+  product: CardProduct;
+  currency?: string;
+  index?: number;
+}) {
   const sale = discountPercent(product.minPrice, product.compareAt);
+  const hover = product.imageHover && product.imageHover !== product.image ? product.imageHover : null;
   return (
-    <article className="card-rise group relative">
+    <article className="card-rise group relative" style={{ ["--i" as string]: Math.min(index, 12) }}>
       <Link href={`/product/${product.slug}`} className="block">
         <div className="relative aspect-[4/5] overflow-hidden bg-bone">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={product.image || "/images/fallback.jpg"}
             alt={product.name}
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+            className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
             loading="lazy"
           />
+          {hover ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img src={hover} alt="" className="card-img-b" loading="lazy" />
+          ) : null}
           <div className="absolute left-2 top-2 flex flex-col gap-1">
             {sale ? (
               <span className="bg-sale px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-white">
@@ -73,7 +87,7 @@ export function ProductCard({ product, currency = "usd" }: { product: CardProduc
           </div>
         </div>
       </Link>
-      <div className="absolute right-2 top-2 flex flex-col gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100">
+      <div className="absolute right-2 top-2 flex flex-col gap-1 opacity-100 transition-opacity duration-500 sm:opacity-0 sm:group-hover:opacity-100">
         <WishlistButton slug={product.slug} />
         <QuickViewButton slug={product.slug} />
         {product.variantId && (product.available ?? 1) > 0 ? <QuickAdd variantId={product.variantId} /> : null}

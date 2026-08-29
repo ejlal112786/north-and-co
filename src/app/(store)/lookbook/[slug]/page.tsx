@@ -44,11 +44,11 @@ export default async function LookbookPage({ params }: { params: Promise<{ slug:
         </div>
       </section>
       <div className="mx-auto max-w-catalog px-4 py-16">
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {rows.map(({ piece, product: p }) => (
-            <div key={p.id}>
+        <div className="catalog-grid grid grid-cols-2 gap-4 md:grid-cols-4">
+          {rows.map(({ piece, product: p }, i) => (
+            <div key={p.id} style={{ ["--i" as string]: i }}>
               <p className="mb-2 text-[11px] uppercase tracking-widest text-muted">{piece.note}</p>
-              <ProductCard product={toCard(p)} currency={settings.store.currency} />
+              <ProductCard product={toCard(p)} currency={settings.store.currency} index={i} />
             </div>
           ))}
         </div>

@@ -36,9 +36,9 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
   }, [q]);
 
   return (
-    <div className="fixed inset-0 z-50 bg-ink/40" onClick={onClose}>
+    <div className="overlay-in fixed inset-0 z-50 bg-ink/40" onClick={onClose}>
       <div
-        className="mx-auto mt-16 max-w-xl border border-line bg-paper p-4 shadow-sm"
+        className="panel-in mx-auto mt-16 max-w-xl border border-line bg-paper p-4 shadow-sm"
         onClick={(e) => e.stopPropagation()}
       >
         <form
@@ -55,7 +55,7 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
             ref={input}
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Merino, linen, brass…"
+            placeholder="Merino, oxford, trench…"
             className="mt-2 w-full border-b border-ink bg-transparent py-2 text-lg outline-none"
           />
         </form>

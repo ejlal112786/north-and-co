@@ -43,10 +43,10 @@ export function HeaderBar({ items, initialCount }: { items: Item[]; initialCount
         </p>
       </div>
       <header
-        className={`sticky top-0 z-40 border-b border-line bg-paper/95 backdrop-blur transition-shadow duration-300 ${scrolled ? "shadow-sm" : ""}`}
+        className={`sticky top-0 z-40 border-b border-line bg-paper/95 backdrop-blur transition-shadow duration-500 ${scrolled ? "shadow-sm" : ""}`}
       >
         <div
-          className={`mx-auto flex max-w-catalog items-center justify-between gap-4 px-4 transition-all duration-300 ${scrolled ? "py-2" : "py-3 lg:py-4"}`}
+          className={`mx-auto flex max-w-catalog items-center justify-between gap-4 px-4 transition-all duration-500 ${scrolled ? "py-2" : "py-3 lg:py-4"}`}
         >
           <button
             className="lg:hidden text-sm uppercase tracking-widest"
@@ -60,7 +60,7 @@ export function HeaderBar({ items, initialCount }: { items: Item[]; initialCount
           </Link>
           <nav className="hidden items-center gap-6 text-[13px] uppercase tracking-[0.16em] lg:flex">
             {items.map((i) => (
-              <Link key={i.id} href={i.href} className="hover:text-copper">
+              <Link key={i.id} href={i.href} className="link-underline hover:text-copper">
                 {i.label}
               </Link>
             ))}
@@ -80,8 +80,8 @@ export function HeaderBar({ items, initialCount }: { items: Item[]; initialCount
             </Link>
           </div>
         </div>
-        {open ? (
-          <nav className="border-t border-line px-4 py-4 lg:hidden">
+        <div className={`menu-panel lg:hidden ${open ? "is-open" : ""}`}>
+          <nav className="border-t border-line px-4 py-4">
             <ul className="space-y-3 text-sm uppercase tracking-[0.16em]">
               {items.map((i) => (
                 <li key={i.id}>
@@ -107,7 +107,7 @@ export function HeaderBar({ items, initialCount }: { items: Item[]; initialCount
               </li>
             </ul>
           </nav>
-        ) : null}
+        </div>
       </header>
       {search ? <SearchModal onClose={() => setSearch(false)} /> : null}
     </>

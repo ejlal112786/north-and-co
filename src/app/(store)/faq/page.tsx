@@ -11,9 +11,9 @@ export default async function FaqPage() {
       <Reveal>
         <h1 className="font-serif text-5xl">FAQs</h1>
         <p className="mt-4 text-[15px] leading-relaxed text-[#3f3a34]">
-          Guest checkout only — no customer accounts. Prices are PKR. Rapid payments (cards, JazzCash, easypaisa,
-          Raast) are marked paid after Rapid confirms the amount. Cash on delivery stays unpaid until the desk records
-          cash. Answers below come from the desk database. Longer policy lives on{" "}
+          Guest checkout only — no customer accounts. Prices are US dollars. Rapid (cards, JazzCash, easypaisa,
+          Raast) is charged in PKR and marked paid after Rapid confirms. Cash on delivery stays unpaid until the desk
+          records cash. Answers below come from the desk database. Longer policy lives on{" "}
           <Link href="/about" className="underline">
             About
           </Link>

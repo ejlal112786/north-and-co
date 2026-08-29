@@ -132,7 +132,7 @@ export function CheckoutForm({
       o.push({
         id: "RAPID",
         label: "Pay online (Rapid Gateway)",
-        note: "Cards, JazzCash, easypaisa, and Raast on Rapid Gateway’s hosted page. Paid only after Rapid confirms the PKR amount.",
+        note: "Cards, JazzCash, easypaisa, and Raast. Shop prices are USD; Rapid charges the PKR equivalent. Paid only after Rapid confirms.",
       });
     if (codOn) o.push({ id: "COD", label: "Cash on delivery", note: "Order is confirmed unpaid. Pay the courier. Not marked paid until we receive it." });
     return o;

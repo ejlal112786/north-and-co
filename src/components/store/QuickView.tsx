@@ -76,9 +76,9 @@ function QuickViewModal({ slug, onClose }: { slug: string; onClose: () => void }
   }
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-ink/50 p-4" onClick={onClose}>
+    <div className="overlay-in fixed inset-0 z-50 grid place-items-center bg-ink/50 p-4" onClick={onClose}>
       <div
-        className="grid max-h-[90vh] w-full max-w-2xl overflow-auto border border-line bg-paper md:grid-cols-2"
+        className="panel-in grid max-h-[90vh] w-full max-w-2xl overflow-auto border border-line bg-paper md:grid-cols-2"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="aspect-[4/5] bg-bone md:aspect-auto">
@@ -87,7 +87,7 @@ function QuickViewModal({ slug, onClose }: { slug: string; onClose: () => void }
         </div>
         <div className="p-5">
           <p className="font-serif text-2xl">{data?.name || "…"}</p>
-          {v ? <p className="mt-2">{formatMoney(v.priceCents, data?.currency || "pkr")}</p> : null}
+          {v ? <p className="mt-2">{formatMoney(v.priceCents, data?.currency || "usd")}</p> : null}
           {err ? <p className="mt-2 text-sm text-sale">{err}</p> : null}
           {data?.variants.length ? (
             <div className="mt-4 flex flex-wrap gap-2">

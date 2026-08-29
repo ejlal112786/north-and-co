@@ -13,7 +13,7 @@ export async function GET(req: Request) {
   const products = await prisma.product.findMany({
     where: { slug: { in: slugs }, status: "PUBLISHED" },
     include: {
-      images: { orderBy: { sortOrder: "asc" }, take: 1 },
+      images: { orderBy: { sortOrder: "asc" }, take: 2 },
       variants: { where: { isActive: true } },
     },
   });

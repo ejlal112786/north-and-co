@@ -15,8 +15,9 @@ export default async function HomePage() {
     searchProducts({ newArrival: true, pageSize: 8, sort: "newest" }),
     searchProducts({ bestseller: true, pageSize: 8, sort: "bestselling" }),
     prisma.category.findMany({
-      where: { featured: true, isActive: true, parentId: null },
+      where: { featured: true, isActive: true },
       orderBy: { sortOrder: "asc" },
+      take: 8,
     }),
     prisma.banner.findMany({ where: { isActive: true }, orderBy: { sortOrder: "asc" } }),
     prisma.faq.findMany({ where: { isActive: true }, orderBy: { sortOrder: "asc" }, take: 3 }),
@@ -38,7 +39,7 @@ export default async function HomePage() {
         <div className="relative mx-auto flex min-h-[86vh] max-w-catalog flex-col justify-end px-4 pb-16 pt-32">
           <p className="text-[11px] uppercase tracking-[0.22em]">Guest checkout · Rapid or COD · No accounts</p>
           <h1 className="mt-4 max-w-3xl font-serif text-5xl leading-[1.05] sm:text-7xl">
-            {hero?.title || "Cloth, table, and objects that earn their keep."}
+            {hero?.title || "Cloth cut to last. Guest checkout, no accounts."}
           </h1>
           <p className="mt-5 max-w-lg text-base text-paper/80">
             {hero?.subtitle || settings.store.tagline}
@@ -72,7 +73,7 @@ export default async function HomePage() {
         <div className="marquee-track py-3 text-[12px] uppercase tracking-[0.2em] text-muted">
           {Array.from({ length: 2 }).map((_, i) => (
             <span key={i} className="px-8">
-              Guest checkout · Rapid verified PKR payments · Cash on delivery · 30-day returns · No customer accounts
+              Guest checkout · Prices in USD · Rapid or cash on delivery · 30-day returns · No customer accounts
               · Stock checked on the server ·&nbsp;
             </span>
           ))}
@@ -88,9 +89,9 @@ export default async function HomePage() {
             </Link>
           </div>
         </Reveal>
-        <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4">
-          {featured.products.map((p) => (
-            <ProductCard key={p.slug} product={toCard(p)} currency={currency} />
+        <div className="catalog-grid mt-8 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4">
+          {featured.products.map((p, i) => (
+            <ProductCard key={p.slug} product={toCard(p)} currency={currency} index={i} />
           ))}
         </div>
       </section>
@@ -107,7 +108,7 @@ export default async function HomePage() {
                 <img
                   src={c.image || "/images/fallback.jpg"}
                   alt={c.name}
-                  className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                  className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
                 />
               </div>
               <p className="mt-2 text-[12px] uppercase tracking-[0.16em]">{c.name}</p>
@@ -123,11 +124,11 @@ export default async function HomePage() {
             <img src={split.image || "/images/banners/linen.jpg"} alt="" className="h-full w-full object-cover" />
           </div>
           <div className="bg-sage px-8 py-16 text-paper md:px-16">
-            <p className="text-[11px] uppercase tracking-[0.2em]">House linen</p>
+            <p className="text-[11px] uppercase tracking-[0.2em]">From the rack</p>
             <h2 className="mt-4 font-serif text-4xl">{split.title}</h2>
             <p className="mt-4 max-w-sm text-paper/80">{split.subtitle}</p>
             <Link href={split.href} className="mt-8 inline-block border border-paper px-5 py-2 text-[12px] uppercase tracking-widest">
-              See the set
+              Shop the piece
             </Link>
           </div>
         </section>
@@ -157,19 +158,23 @@ export default async function HomePage() {
       </section>
 
       <section className="mx-auto max-w-catalog px-4 py-16">
-        <h2 className="font-serif text-4xl">New arrivals</h2>
-        <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4">
-          {newest.products.map((p) => (
-            <ProductCard key={p.slug} product={toCard(p)} currency={currency} />
+        <Reveal>
+          <h2 className="font-serif text-4xl">New arrivals</h2>
+        </Reveal>
+        <div className="catalog-grid mt-8 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4">
+          {newest.products.map((p, i) => (
+            <ProductCard key={p.slug} product={toCard(p)} currency={currency} index={i} />
           ))}
         </div>
       </section>
 
       <section className="mx-auto max-w-catalog px-4 py-16">
-        <h2 className="font-serif text-4xl">Best sellers</h2>
-        <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4">
-          {best.products.map((p) => (
-            <ProductCard key={p.slug} product={toCard(p)} currency={currency} />
+        <Reveal>
+          <h2 className="font-serif text-4xl">Best sellers</h2>
+        </Reveal>
+        <div className="catalog-grid mt-8 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4">
+          {best.products.map((p, i) => (
+            <ProductCard key={p.slug} product={toCard(p)} currency={currency} index={i} />
           ))}
         </div>
       </section>

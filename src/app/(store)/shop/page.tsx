@@ -72,9 +72,9 @@ export default async function ShopPage({
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3">
-              {result.products.map((p) => (
-                <ProductCard key={p.slug} product={toCard(p)} currency={settings.store.currency} />
+            <div className="catalog-grid grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3">
+              {result.products.map((p, i) => (
+                <ProductCard key={p.slug} product={toCard(p)} currency={settings.store.currency} index={i} />
               ))}
             </div>
           )}

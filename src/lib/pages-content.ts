@@ -17,15 +17,15 @@ Staff do not log in either. The desk at /admin is an open back office for packin
 
 ## What we make and what we buy
 
-The house line is cut in small runs: shirts, trousers, knits we put our name on. Holm knits merino and cashmere in Italy. Field Theory waxes cloth and cuts leather in England. Atelier M fires stoneware. Kettle & Kiln makes soap, oil, and a candle that does not smell like a department store.
+The house line is cut in small runs: shirts, trousers, coats, dresses, knits we put our name on. Holm knits merino and cashmere in Italy. Field Theory waxes cloth and cuts leather in England. We sell clothes, not a lifestyle department.
 
 We would rather be out of a size than pretend we have it. Stock is checked on the server when you add to cart and again when you pay.
 
 ## How you pay
 
-Prices are in Pakistani rupees. The number on a product card is a preview. The number at checkout is calculated on our server: line items, one coupon if you have one, shipping for the country you typed, tax if the desk has set a rate (it is zero unless we say otherwise).
+Prices on the site are in US dollars. The number on a product card is a preview. The number at checkout is calculated on our server: line items, one coupon if you have one, shipping for the country you typed, tax if the desk has set a rate (it is zero unless we say otherwise).
 
-Online pay goes through Rapid Gateway Pakistan. One session can offer cards, JazzCash, easypaisa, and Raast. Amount and currency sent to Rapid are PKR. We mark an order paid only after Rapid confirms the payment and the amount matches. The return URL is for your convenience. It is not proof of payment.
+Online pay goes through Rapid Gateway Pakistan. One session can offer cards, JazzCash, easypaisa, and Raast. Rapid is charged in PKR at the posted USD→PKR rate (environment RAPID_PKR_PER_USD). We mark an order paid only after Rapid confirms the payment and the PKR amount matches. The return URL is for your convenience. It is not proof of payment.
 
 Cash on delivery is available where the checkout shows it. A COD order is not paid until the desk records the cash. We will not print a fake “success” screen.
 
@@ -49,7 +49,7 @@ We do not promise a courier until the desk adds a carrier and a tracking number.
 
 ## How a quote is built
 
-You enter a country (and city/postcode where asked). The desk has zones: Pakistan, United States, Canada, and rest of world. Each zone has methods with a rate in PKR (stored as integer paisa on the server). Some methods have a free-above threshold, also in PKR. Coupons such as FREESHIP can zero the shipping line when the order meets their rules. One coupon per order.
+You enter a country (and city/postcode where asked). The desk has zones: Pakistan, United States, Canada, and rest of world. Each zone has methods with a rate in US dollars (stored as integer cents on the server). Some methods have a free-above threshold, also in USD. Coupons such as FREESHIP can zero the shipping line when the order meets their rules. One coupon per order.
 
 Karachi local delivery is a Pakistan method. It is not the same as “tracked international.” If you live in Karachi and you want the local rate, choose Pakistan as the country and pick Karachi local at checkout when it is listed.
 
@@ -65,7 +65,7 @@ Those zones exist in the desk. Pickup, when listed, is a method with a zero rate
 
 ## Free shipping
 
-Free shipping is either a threshold on a method (calculated in PKR on the server) or a coupon. A homepage strip is not a contract. If FREESHIP is active, it still has to pass its minimum and the one-coupon rule.
+Free shipping is either a threshold on a method (calculated in USD on the server) or a coupon. A homepage strip is not a contract. If FREESHIP is active, it still has to pass its minimum and the one-coupon rule.
 
 ## After it leaves
 
@@ -157,7 +157,7 @@ If you are not able to agree, do not check out.
 
 ## Prices
 
-Product cards are a preview in PKR. Checkout totals — subtotal, discount, shipping, tax, grand total — are computed on the server from the cart in the database, not from numbers the browser invented. We may refuse an order if the client total does not match.
+Product cards are a preview in US dollars. Checkout totals — subtotal, discount, shipping, tax, grand total — are computed on the server from the cart in the database, not from numbers the browser invented. We may refuse an order if the client total does not match. Rapid still settles in PKR.
 
 ## Stock
 
@@ -234,7 +234,7 @@ export const FAQ_SEED: { sortOrder: number; question: string; answer: string }[]
     sortOrder: 4,
     question: "What online methods do you take?",
     answer:
-      "Rapid Gateway Pakistan: credit and debit cards, JazzCash, easypaisa, and Raast, in PKR. We send Rapid the amount in rupees. An order is paid only after Rapid confirms success and the amount matches. If merchant keys are empty, online pay is refused and COD can still work. The page you return to after Rapid is not proof of payment.",
+      "Rapid Gateway Pakistan: credit and debit cards, JazzCash, easypaisa, and Raast. Shop prices are USD; Rapid is charged in PKR at RAPID_PKR_PER_USD. An order is paid only after Rapid confirms success and the PKR amount matches. If merchant keys are empty, online pay is refused and COD can still work. The page you return to after Rapid is not proof of payment.",
   },
   {
     sortOrder: 5,
@@ -246,7 +246,7 @@ export const FAQ_SEED: { sortOrder: number; question: string; answer: string }[]
     sortOrder: 6,
     question: "Can I use more than one code?",
     answer:
-      "One coupon per order. WELCOME10 is first order only. FREESHIP, when active, has a minimum in PKR. The discount is calculated on the server. If a code fails, the message is the real reason — we do not silently skip a rule.",
+      "One coupon per order. WELCOME10 is first order only. FREESHIP, when active, has a minimum in USD. The discount is calculated on the server. If a code fails, the message is the real reason — we do not silently skip a rule.",
   },
   {
     sortOrder: 7,
@@ -277,5 +277,8 @@ export const FAQ_SEED: { sortOrder: number; question: string; answer: string }[]
     question: "How do I email you?",
     answer:
       "Use the contact form (stored for the desk and emailed to spideyspider112786@gmail.com when SMTP is set) or write that address directly. Include the order number for anything about a parcel. No live chat.",
+  },
+];
+ything about a parcel. No live chat.",
   },
 ];

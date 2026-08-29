@@ -143,7 +143,7 @@ export async function getProductBySlug(slug: string) {
         include: {
           related: {
             include: {
-              images: { orderBy: { sortOrder: "asc" }, take: 1 },
+              images: { orderBy: { sortOrder: "asc" }, take: 2 },
               variants: { where: { isActive: true }, take: 1 },
             },
           },
@@ -230,6 +230,7 @@ export function toCard(p: {
     minPrice,
     compareAt,
     image: p.images[0]?.url || "/images/fallback.jpg",
+    imageHover: p.images[1]?.url || null,
     avgRating: p.avgRating,
     reviewCount: p.reviewCount,
     available,

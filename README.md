@@ -36,13 +36,14 @@ RAPID_MERCHANT_ID=your_merchant_id
 RAPID_SECRET_KEY=your_secret_key
 RAPID_WEBHOOK_SECRET=your_webhook_secret
 RAPID_API_BASE=https://api.rapidgateway.pk
+RAPID_PKR_PER_USD=280
 APP_URL=https://your-domain.com
 ```
 
 Flow:
 
 1. Server `POST /v1/payments` with Bearer secret + merchant id.
-2. **Amount is PKR rupees (major units), not paisa.** Shop totals are integer paisa; we send `Math.round(cents / 100)`. Example: `425000` paisa → Rapid `amount: 4250`, `currency: "PKR"`.
+2. **Shop prices are USD.** Rapid still wants **PKR rupees (major units)**. We convert with `RAPID_PKR_PER_USD` (default 280). Example: `$185.00` → Rapid `amount: 51800`, `currency: "PKR"`.
 3. Customer is redirected to `checkout_url`.
 4. Return URL is UX only. Webhook `POST /api/webhooks/rapid` must carry `X-RG-Signature` (HMAC-SHA256 of the raw body with `RAPID_WEBHOOK_SECRET`).
 5. We **always re-query** `GET /v1/payments/:id` and mark paid only if Rapid status is succeeded **and** the amount matches the order.

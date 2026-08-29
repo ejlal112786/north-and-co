@@ -13,8 +13,8 @@ export default function LookbooksPage() {
         Complete outfits from the catalog. Every piece is a real SKU with live stock. Add the set, or open each item.
       </p>
       <div className="mt-12 grid gap-8 md:grid-cols-3">
-        {LOOKBOOKS.map((l) => (
-          <Reveal key={l.slug}>
+        {LOOKBOOKS.map((l, i) => (
+          <Reveal key={l.slug} delay={i * 80}>
             <Link href={`/lookbook/${l.slug}`} className="group block">
               <div className="aspect-[4/5] overflow-hidden bg-bone">
                 {/* eslint-disable-next-line @next/next/no-img-element */}

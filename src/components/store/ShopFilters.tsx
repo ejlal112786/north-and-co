@@ -6,8 +6,8 @@ import { useState } from "react";
 type Cat = { slug: string; name: string; children: { slug: string; name: string }[] };
 type Brand = { slug: string; name: string };
 
-const SIZES = ["S", "M", "L", "XL", "28", "30", "32", "34", "36"];
-const COLORS = ["Navy", "Oat", "Black", "White", "Olive", "Ink", "Flax", "Brass", "Tan", "Rust", "Charcoal", "Sand", "Terracotta"];
+const SIZES = ["XS", "S", "M", "L", "XL", "28", "30", "32", "34", "36"];
+const COLORS = ["Navy", "Oat", "Black", "White", "Olive", "Ink", "Camel", "Indigo", "Stone", "Ivory", "Charcoal", "Sand", "Khaki", "Bone", "Rust"];
 const GENDERS = [
   ["men", "Men"],
   ["women", "Women"],
@@ -149,7 +149,7 @@ export function ShopFilters({ categories, brands }: { categories: Cat[]; brands:
         </div>
       </div>
       <div>
-        <p className="text-[11px] uppercase tracking-[0.18em] text-muted">Price (PKR)</p>
+        <p className="text-[11px] uppercase tracking-[0.18em] text-muted">Price (USD)</p>
         <div className="mt-2 flex gap-2">
           <input name="min" defaultValue={sp.get("min") || ""} placeholder="Min" className="w-full border border-line bg-transparent px-2 py-1" />
           <input name="max" defaultValue={sp.get("max") || ""} placeholder="Max" className="w-full border border-line bg-transparent px-2 py-1" />

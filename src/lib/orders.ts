@@ -201,7 +201,7 @@ export async function placeOrder(input: CheckoutInput, origin: string) {
 
     await prisma.order.update({
       where: { id: order.id },
-      data: { rapidAccessCode: rapid.id, status: "PAYMENT_PENDING", currency: "pkr" },
+      data: { rapidAccessCode: rapid.id, status: "PAYMENT_PENDING" },
     });
     return {
       orderNumber: order.orderNumber,
@@ -265,7 +265,7 @@ export async function fulfillRapidOrder(paymentId: string) {
       provider: "rapid",
       providerRef: txnId,
       amountCents: order.totalCents,
-      currency: "pkr",
+      currency: order.currency || "usd",
       status: "PAID",
       rawPayload: JSON.stringify({
         id: result.id,

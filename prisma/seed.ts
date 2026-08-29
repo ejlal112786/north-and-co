@@ -1,6 +1,7 @@
 import { PrismaClient, CouponType } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { CMS_PAGES, FAQ_SEED } from "../src/lib/pages-content";
+import { CLOTHES_EXTRA, RETIRE_SLUGS, productImageUrls } from "../src/lib/clothes-extra";
 
 const prisma = new PrismaClient();
 
@@ -74,7 +75,7 @@ async function main() {
       name: "Apparel",
       description: "Cloth that earns its keep — merino, linen, waxed cotton.",
       image: "/images/categories/apparel.jpg",
-      featured: true,
+      featured: false,
       sortOrder: 1,
       seoTitle: "Apparel — NORTH & CO.",
       seoDescription: "Merino knits, washed shirts, and field jackets.",
@@ -86,7 +87,7 @@ async function main() {
       name: "Home",
       description: "Linen, stoneware, and light for rooms you actually live in.",
       image: "/images/categories/home.jpg",
-      featured: true,
+      featured: false,
       sortOrder: 2,
     },
   });
@@ -96,7 +97,7 @@ async function main() {
       name: "Beauty",
       description: "Unscented soap, bergamot wash, mineral SPF.",
       image: "/images/categories/beauty.jpg",
-      featured: true,
+      featured: false,
       sortOrder: 3,
     },
   });
@@ -116,7 +117,7 @@ async function main() {
       name: "Outdoor",
       description: "Packs, bottles, and waxed duffles.",
       image: "/images/categories/outdoor.jpg",
-      featured: true,
+      featured: false,
       sortOrder: 5,
     },
   });
@@ -126,22 +127,50 @@ async function main() {
       name: "Objects",
       description: "Desk tools, paper, and candles.",
       image: "/images/categories/objects.jpg",
-      featured: true,
+      featured: false,
       sortOrder: 6,
     },
   });
 
   const knitwear = await prisma.category.create({
-    data: { slug: "knitwear", name: "Knitwear", parentId: apparel.id, sortOrder: 1 },
+    data: {
+      slug: "knitwear",
+      name: "Knitwear",
+      parentId: apparel.id,
+      sortOrder: 1,
+      featured: true,
+      image: "/images/products/merino-crewneck.jpg",
+    },
   });
   const shirts = await prisma.category.create({
-    data: { slug: "shirts", name: "Shirts", parentId: apparel.id, sortOrder: 2 },
+    data: {
+      slug: "shirts",
+      name: "Shirts",
+      parentId: apparel.id,
+      sortOrder: 2,
+      featured: true,
+      image: "/images/products/washed-oxford-shirt.jpg",
+    },
   });
   const outerwear = await prisma.category.create({
-    data: { slug: "outerwear", name: "Outerwear", parentId: apparel.id, sortOrder: 3 },
+    data: {
+      slug: "outerwear",
+      name: "Outerwear",
+      parentId: apparel.id,
+      sortOrder: 3,
+      featured: true,
+      image: "/images/products/field-jacket.jpg",
+    },
   });
   const bottoms = await prisma.category.create({
-    data: { slug: "bottoms", name: "Bottoms", parentId: apparel.id, sortOrder: 4 },
+    data: {
+      slug: "bottoms",
+      name: "Bottoms",
+      parentId: apparel.id,
+      sortOrder: 4,
+      featured: true,
+      image: "/images/products/wide-leg-trouser.jpg",
+    },
   });
   const bedding = await prisma.category.create({
     data: { slug: "bedding", name: "Bedding", parentId: home.id, sortOrder: 1 },
@@ -153,10 +182,34 @@ async function main() {
     data: { slug: "lighting", name: "Lighting", parentId: home.id, sortOrder: 3 },
   });
   const coats = await prisma.category.create({
-    data: { slug: "coats", name: "Coats", parentId: apparel.id, sortOrder: 5 },
+    data: {
+      slug: "coats",
+      name: "Coats",
+      parentId: apparel.id,
+      sortOrder: 5,
+      featured: true,
+      image: "/images/products/wool-overcoat.jpg",
+    },
   });
   const dresses = await prisma.category.create({
-    data: { slug: "dresses", name: "Dresses", parentId: apparel.id, sortOrder: 6 },
+    data: {
+      slug: "dresses",
+      name: "Dresses",
+      parentId: apparel.id,
+      sortOrder: 6,
+      featured: true,
+      image: "/images/products/silk-slip-dress.jpg",
+    },
+  });
+  const skirts = await prisma.category.create({
+    data: {
+      slug: "skirts",
+      name: "Skirts",
+      parentId: apparel.id,
+      sortOrder: 7,
+      featured: true,
+      image: "/images/products/pleated-midi-skirt.jpg",
+    },
   });
 
   type V = {
@@ -720,9 +773,9 @@ async function main() {
       short: "A three-pack. Cushioned sole, no pageantry.",
       description:
         "Merino-nylon that does the trail and the office. Cushioned sole, stay-up cuff. Three pairs.",
-      categoryId: outdoor.id,
+      categoryId: accessories.id,
       brandId: brand["holm"]!.id,
-      tags: "socks merino trail pack",
+      tags: "socks merino trail pack gender:unisex style:basics",
       specs: [{ label: "Pack", value: "3 pairs" }],
       weight: 180,
       variants: ["S", "M", "L"].map((size) => ({
@@ -1043,7 +1096,9 @@ async function main() {
   ];
 
   const createdProducts = [];
+  const retire = new Set<string>(RETIRE_SLUGS);
   for (const p of catalog) {
+    if (retire.has(p.slug)) continue;
     const prod = await prisma.product.create({
       data: {
         slug: p.slug,
@@ -1064,10 +1119,67 @@ async function main() {
         seoDescription: p.short,
         weightGrams: p.weight,
         images: {
-          create: [
-            { url: `/images/products/${p.slug}.jpg`, alt: p.name, sortOrder: 0 },
-            { url: `/images/products/${p.slug}-2.jpg`, alt: `${p.name} detail`, sortOrder: 1 },
-          ],
+          create: productImageUrls(p.slug).map((url, i) => ({
+            url,
+            alt: i === 0 ? p.name : `${p.name}, angle ${i + 1}`,
+            sortOrder: i,
+          })),
+        },
+        variants: {
+          create: p.variants.map((v) => ({
+            sku: v.sku,
+            title: v.title,
+            priceCents: v.price,
+            compareAtCents: v.compare ?? null,
+            stockQty: v.stock,
+            reservedQty: 0,
+            lowStockThreshold: 5,
+            options: JSON.stringify(v.options),
+          })),
+        },
+      },
+    });
+    createdProducts.push(prod);
+  }
+
+  const catBySlug: Record<string, string> = {
+    knitwear: knitwear.id,
+    shirts: shirts.id,
+    outerwear: outerwear.id,
+    bottoms: bottoms.id,
+    coats: coats.id,
+    dresses: dresses.id,
+    skirts: skirts.id,
+    accessories: accessories.id,
+  };
+  for (const p of CLOTHES_EXTRA) {
+    const categoryId = catBySlug[p.categorySlug];
+    const brandId = brand[p.brandSlug]?.id;
+    if (!categoryId || !brandId) continue;
+    const prod = await prisma.product.create({
+      data: {
+        slug: p.slug,
+        name: p.name,
+        shortDescription: p.short,
+        description: p.description,
+        searchText: searchText(p.name, p.short, p.description, p.tags, p.variants.map((v) => v.sku).join(" ")),
+        status: "PUBLISHED",
+        featured: !!p.featured,
+        bestseller: !!p.bestseller,
+        newArrival: !!p.newArrival,
+        brandId,
+        categoryId,
+        specifications: JSON.stringify(p.specs),
+        tags: p.tags,
+        seoTitle: `${p.name} — NORTH & CO.`,
+        seoDescription: p.short,
+        weightGrams: p.weight,
+        images: {
+          create: productImageUrls(p.slug).map((url, i) => ({
+            url,
+            alt: i === 0 ? p.name : `${p.name}, angle ${i + 1}`,
+            sortOrder: i,
+          })),
         },
         variants: {
           create: p.variants.map((v) => ({
@@ -1098,21 +1210,21 @@ async function main() {
   await rel("merino-crewneck", "washed-oxford-shirt", "related");
   await rel("merino-crewneck", "cashmere-beanie", "fbt");
   await rel("heavyweight-tee", "wide-leg-trouser", "related");
-  await rel("heavyweight-tee", "canvas-tote", "fbt");
-  await rel("field-jacket", "daypack", "related");
+  await rel("heavyweight-tee", "wide-leg-jean", "fbt");
+  await rel("field-jacket", "denim-jacket", "related");
   await rel("field-jacket", "merino-socks", "fbt");
-  await rel("linen-duvet-set", "wool-throw", "related");
-  await rel("linen-duvet-set", "linen-napkins", "fbt");
-  await rel("stoneware-set", "oak-board", "related");
-  await rel("stoneware-set", "pour-over-set", "fbt");
-  await rel("brass-lamp", "desk-clock", "fbt");
-  await rel("canvas-tote", "card-case", "fbt");
-  await rel("bergamot-wash", "soap-set", "fbt");
-  await rel("cedar-candle", "linen-notebook", "related");
+  await rel("trench-coat", "wool-blazer", "related");
+  await rel("trench-coat", "cashmere-turtleneck", "fbt");
+  await rel("wool-blazer", "pleated-trouser", "related");
+  await rel("wool-blazer", "cotton-poplin-shirt", "fbt");
+  await rel("knit-midi-dress", "leather-loafer", "fbt");
+  await rel("pleated-midi-skirt", "silk-blouse", "fbt");
+  await rel("wide-leg-jean", "denim-jacket", "related");
+  await rel("cable-cardigan", "cotton-chino", "related");
   await rel("merino-polo", "wide-leg-trouser", "related");
   await rel("merino-polo", "wool-overcoat", "fbt");
   await rel("wool-overcoat", "merino-crewneck", "related");
-  await rel("french-terry-hoodie", "canvas-tote", "fbt");
+  await rel("french-terry-hoodie", "wide-leg-jean", "fbt");
   await rel("cotton-chino", "merino-polo", "related");
   await rel("shirt-jacket", "cotton-chino", "fbt");
   await rel("silk-slip-dress", "boiled-wool-scarf", "fbt");
@@ -1122,23 +1234,23 @@ async function main() {
   const reviewers = [
     { name: "Amira K.", email: "amira.k@example.com", rating: 5, title: "The sweater I wear on purpose", body: "Bought the oat crewneck in M. It does not itch, which is the whole review. Washed once, dried flat, still looks new." },
     { name: "James P.", email: "james.p@example.com", rating: 4, title: "Jacket that actually sheds rain", body: "Wore the olive field jacket through a wet week in Glasgow. Sleeves a touch long on me; otherwise the real thing." },
-    { name: "Sana R.", email: "sana.r@example.com", rating: 5, title: "Linen as advertised", body: "The duvet is wrinkled and cool and exactly what we wanted. Queen flax. Will buy the terracotta next winter." },
-    { name: "Owen L.", email: "owen.l@example.com", rating: 5, title: "Tote replaced two cheaper bags", body: "Canvas stands up. Leather handles have already darkened. Carry it every day." },
-    { name: "Hina M.", email: "hina.m@example.com", rating: 4, title: "Quiet candle", body: "Cedar without the department-store cloud. Burns evenly if you trim it." },
+    { name: "Sana R.", email: "sana.r@example.com", rating: 5, title: "The trench that sheds", body: "Stone trench in M. Belt sits. Wore it through a wet week. Not costume." },
+    { name: "Owen L.", email: "owen.l@example.com", rating: 5, title: "Jean replaced two cheaper pairs", body: "Wide leg, high rise. Unfinished hem to the loafer. Indigo already fading at the thigh." },
+    { name: "Hina M.", email: "hina.m@example.com", rating: 4, title: "Blazer over a knit", body: "Navy unstructured. Shoulder does not fight the crewneck. Sleeve to the tailor." },
     { name: "Theo B.", email: "theo.b@example.com", rating: 5, title: "Oxford after two washes", body: "Sky color, size L. Collar sits. This is the shirt I should have owned ten years ago." },
   ];
 
   const reviewTargets = [
     "merino-crewneck",
     "field-jacket",
-    "linen-duvet-set",
-    "canvas-tote",
-    "cedar-candle",
+    "trench-coat",
+    "wide-leg-jean",
+    "wool-blazer",
     "washed-oxford-shirt",
     "heavyweight-tee",
-    "stoneware-set",
-    "brass-lamp",
-    "daypack",
+    "cashmere-turtleneck",
+    "pleated-midi-skirt",
+    "denim-jacket",
   ];
   let ri = 0;
   for (const slug of reviewTargets) {
@@ -1187,10 +1299,10 @@ async function main() {
         isActive: true,
       },
       {
-        code: "LINEN15",
+        code: "KNIT15",
         type: CouponType.CATEGORY,
         value: 15,
-        categoryIds: JSON.stringify([home.id, bedding.id]),
+        categoryIds: JSON.stringify([knitwear.id, dresses.id]),
         isActive: true,
       },
       {
@@ -1254,9 +1366,9 @@ async function main() {
         sortOrder: 0,
       },
       {
-        title: "Linen for the bed you actually make",
-        subtitle: "Stonewashed flax, three colors.",
-        href: "/product/linen-duvet-set",
+        title: "A trench that is actually a trench",
+        subtitle: "Gabardine, a belt that ties, unfinished sleeve.",
+        href: "/product/trench-coat",
         position: "home-split",
         image: "/images/banners/linen.jpg",
         sortOrder: 1,
@@ -1275,9 +1387,9 @@ async function main() {
     data: [
       { location: "header", label: "Shop", href: "/shop", sortOrder: 1 },
       { location: "header", label: "Apparel", href: "/shop?category=apparel", sortOrder: 2 },
-      { location: "header", label: "Home", href: "/shop?category=home", sortOrder: 3 },
+      { location: "header", label: "Dresses", href: "/shop?category=dresses", sortOrder: 3 },
       { location: "header", label: "Lookbooks", href: "/lookbook", sortOrder: 4 },
-      { location: "header", label: "Objects", href: "/shop?category=objects", sortOrder: 5 },
+      { location: "header", label: "Outerwear", href: "/shop?category=outerwear", sortOrder: 5 },
       { location: "footer", label: "About", href: "/about", sortOrder: 1 },
       { location: "footer", label: "Shipping", href: "/shipping", sortOrder: 2 },
       { location: "footer", label: "Returns", href: "/returns", sortOrder: 3 },
@@ -1295,11 +1407,11 @@ async function main() {
         key: "store",
         value: JSON.stringify({
           name: "NORTH & CO.",
-          tagline: "Objects for a considered life",
+          tagline: "Cloth for a considered life",
           email: "spideyspider112786@gmail.com",
           phone: "",
           address: "",
-          currency: "pkr",
+          currency: "usd",
           timezone: "Asia/Karachi",
           country: "PK",
           logo: "",
@@ -1310,9 +1422,9 @@ async function main() {
       {
         key: "seo",
         value: JSON.stringify({
-          title: "NORTH & CO. — Objects for a considered life",
+          title: "NORTH & CO. — Cloth for a considered life",
           description:
-            "Apparel, home, and objects made to last. Guest checkout. No customer accounts.",
+            "Apparel cut to last. Guest checkout. No customer accounts.",
           ogImage: "/images/og.jpg",
         }),
       },
