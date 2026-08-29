@@ -27,7 +27,7 @@ export function QuickViewButton({ slug }: { slug: string }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="grid h-8 w-8 place-items-center bg-paper/95 text-[10px] uppercase tracking-widest"
+        className="tap grid w-11 place-items-center bg-paper/95 text-[10px] uppercase tracking-widest"
         aria-label="Quick view"
       >
         View

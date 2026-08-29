@@ -73,7 +73,7 @@ export function CheckoutForm({
   const shippingCents = summary.freeShipping ? 0 : ship?.rateCents ?? 0;
   const total = summary.subtotalCents - summary.discountCents + shippingCents;
 
-  const field = "border border-line bg-transparent px-3 py-2 text-sm w-full";
+  const field = "tap border border-line bg-transparent px-3 text-sm w-full";
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

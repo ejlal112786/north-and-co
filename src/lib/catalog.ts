@@ -19,6 +19,7 @@ export type ProductFilters = {
   featured?: boolean;
   bestseller?: boolean;
   newArrival?: boolean;
+  sale?: boolean;
 };
 
 export async function searchProducts(filters: ProductFilters) {
@@ -53,10 +54,15 @@ export async function searchProducts(filters: ProductFilters) {
   }
   if (filters.gender) and.push({ tags: { contains: `gender:${filters.gender}` } });
   if (filters.style) and.push({ tags: { contains: `style:${filters.style}` } });
-  if (and.length) where.AND = and;
   if (filters.featured) where.featured = true;
   if (filters.bestseller) where.bestseller = true;
   if (filters.newArrival) where.newArrival = true;
+  if (filters.sale) {
+    and.push({
+      variants: { some: { isActive: true, compareAtCents: { gt: 0 } } },
+    });
+  }
+  if (and.length) where.AND = and;
 
   const variantWhere: Prisma.ProductVariantWhereInput = { isActive: true };
   if (filters.min != null) variantWhere.priceCents = { ...(variantWhere.priceCents as object), gte: filters.min };

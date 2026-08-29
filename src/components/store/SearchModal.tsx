@@ -56,7 +56,7 @@ export function SearchModal({ onClose }: { onClose: () => void }) {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Merino, oxford, trench…"
-            className="mt-2 w-full border-b border-ink bg-transparent py-2 text-lg outline-none"
+            className="tap mt-2 w-full border-b border-ink bg-transparent text-lg outline-none"
           />
         </form>
         {data ? (

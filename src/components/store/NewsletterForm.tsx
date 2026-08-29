@@ -26,9 +26,9 @@ export function NewsletterForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Email for restocks"
-        className="flex-1 border border-line bg-paper px-3 py-2 text-sm outline-none focus:border-ink"
+        className="tap flex-1 border border-line bg-paper px-3 text-sm outline-none focus:border-ink"
       />
-      <button className="bg-ink px-4 py-2 text-[11px] uppercase tracking-widest text-paper">Join</button>
+      <button className="tap bg-ink px-4 text-[11px] uppercase tracking-widest text-paper">Join</button>
       {msg ? <span className="sr-only">{msg}</span> : null}
     </form>
   );

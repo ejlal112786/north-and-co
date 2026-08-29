@@ -1,13 +1,30 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Cat = { slug: string; name: string; children: { slug: string; name: string }[] };
 type Brand = { slug: string; name: string };
 
 const SIZES = ["XS", "S", "M", "L", "XL", "28", "30", "32", "34", "36"];
-const COLORS = ["Navy", "Oat", "Black", "White", "Olive", "Ink", "Camel", "Indigo", "Stone", "Ivory", "Charcoal", "Sand", "Khaki", "Bone", "Rust"];
+const COLORS = [
+  "Navy",
+  "Oat",
+  "Black",
+  "White",
+  "Olive",
+  "Ink",
+  "Camel",
+  "Indigo",
+  "Stone",
+  "Ivory",
+  "Charcoal",
+  "Sand",
+  "Khaki",
+  "Bone",
+  "Rust",
+  "Washed",
+];
 const GENDERS = [
   ["men", "Men"],
   ["women", "Women"],
@@ -25,6 +42,13 @@ export function ShopFilters({ categories, brands }: { categories: Cat[]; brands:
   const router = useRouter();
   const sp = useSearchParams();
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
 
   function set(key: string, value?: string) {
     const next = new URLSearchParams(sp.toString());
@@ -54,7 +78,7 @@ export function ShopFilters({ categories, brands }: { categories: Cat[]; brands:
       <div>
         <p className="text-[11px] uppercase tracking-[0.18em] text-muted">Sort</p>
         <select
-          className="mt-2 w-full border border-line bg-paper px-2 py-2"
+          className="tap mt-2 w-full border border-line bg-paper px-2"
           value={sp.get("sort") || "newest"}
           onChange={(e) => set("sort", e.target.value)}
         >
@@ -70,7 +94,7 @@ export function ShopFilters({ categories, brands }: { categories: Cat[]; brands:
         <p className="text-[11px] uppercase tracking-[0.18em] text-muted">Category</p>
         <ul className="mt-2 space-y-1">
           <li>
-            <button type="button" className={!sp.get("category") ? "text-copper" : ""} onClick={() => set("category")}>
+            <button type="button" className={`tap px-0 ${!sp.get("category") ? "text-copper" : ""}`} onClick={() => set("category")}>
               All
             </button>
           </li>
@@ -78,7 +102,7 @@ export function ShopFilters({ categories, brands }: { categories: Cat[]; brands:
             <li key={c.slug}>
               <button
                 type="button"
-                className={sp.get("category") === c.slug ? "text-copper" : ""}
+                className={`tap px-0 ${sp.get("category") === c.slug ? "text-copper" : ""}`}
                 onClick={() => set("category", c.slug)}
               >
                 {c.name}
@@ -89,7 +113,7 @@ export function ShopFilters({ categories, brands }: { categories: Cat[]; brands:
                     <li key={ch.slug}>
                       <button
                         type="button"
-                        className={sp.get("category") === ch.slug ? "text-copper" : ""}
+                        className={`tap px-0 ${sp.get("category") === ch.slug ? "text-copper" : ""}`}
                         onClick={() => set("category", ch.slug)}
                       >
                         {ch.name}
@@ -109,7 +133,7 @@ export function ShopFilters({ categories, brands }: { categories: Cat[]; brands:
             <li key={b.slug}>
               <button
                 type="button"
-                className={sp.get("brand") === b.slug ? "text-copper" : ""}
+                className={`tap px-0 ${sp.get("brand") === b.slug ? "text-copper" : ""}`}
                 onClick={() => set("brand", sp.get("brand") === b.slug ? undefined : b.slug)}
               >
                 {b.name}
@@ -126,7 +150,7 @@ export function ShopFilters({ categories, brands }: { categories: Cat[]; brands:
               type="button"
               key={id}
               onClick={() => set("gender", sp.get("gender") === id ? undefined : id)}
-              className={`border px-2 py-1 text-xs ${sp.get("gender") === id ? "border-ink bg-ink text-paper" : "border-line"}`}
+              className={`tap border px-3 text-xs ${sp.get("gender") === id ? "border-ink bg-ink text-paper" : "border-line"}`}
             >
               {label}
             </button>
@@ -141,7 +165,7 @@ export function ShopFilters({ categories, brands }: { categories: Cat[]; brands:
               type="button"
               key={id}
               onClick={() => set("style", sp.get("style") === id ? undefined : id)}
-              className={`border px-2 py-1 text-xs ${sp.get("style") === id ? "border-ink bg-ink text-paper" : "border-line"}`}
+              className={`tap border px-3 text-xs ${sp.get("style") === id ? "border-ink bg-ink text-paper" : "border-line"}`}
             >
               {label}
             </button>
@@ -151,10 +175,10 @@ export function ShopFilters({ categories, brands }: { categories: Cat[]; brands:
       <div>
         <p className="text-[11px] uppercase tracking-[0.18em] text-muted">Price (USD)</p>
         <div className="mt-2 flex gap-2">
-          <input name="min" defaultValue={sp.get("min") || ""} placeholder="Min" className="w-full border border-line bg-transparent px-2 py-1" />
-          <input name="max" defaultValue={sp.get("max") || ""} placeholder="Max" className="w-full border border-line bg-transparent px-2 py-1" />
+          <input name="min" defaultValue={sp.get("min") || ""} placeholder="Min" className="tap w-full border border-line bg-transparent px-2" />
+          <input name="max" defaultValue={sp.get("max") || ""} placeholder="Max" className="tap w-full border border-line bg-transparent px-2" />
         </div>
-        <button className="mt-2 text-[11px] uppercase tracking-widest underline">Apply</button>
+        <button className="tap mt-2 text-[11px] uppercase tracking-widest underline">Apply</button>
       </div>
       <div>
         <p className="text-[11px] uppercase tracking-[0.18em] text-muted">Size</p>
@@ -164,7 +188,7 @@ export function ShopFilters({ categories, brands }: { categories: Cat[]; brands:
               type="button"
               key={s}
               onClick={() => set("size", sp.get("size") === s ? undefined : s)}
-              className={`border px-2 py-1 text-xs ${sp.get("size") === s ? "border-ink bg-ink text-paper" : "border-line"}`}
+              className={`tap min-w-[44px] border px-2 text-xs ${sp.get("size") === s ? "border-ink bg-ink text-paper" : "border-line"}`}
             >
               {s}
             </button>
@@ -179,7 +203,7 @@ export function ShopFilters({ categories, brands }: { categories: Cat[]; brands:
               type="button"
               key={s}
               onClick={() => set("color", sp.get("color") === s ? undefined : s)}
-              className={`border px-2 py-1 text-xs ${sp.get("color") === s ? "border-ink bg-ink text-paper" : "border-line"}`}
+              className={`tap border px-3 text-xs ${sp.get("color") === s ? "border-ink bg-ink text-paper" : "border-line"}`}
             >
               {s}
             </button>
@@ -187,18 +211,22 @@ export function ShopFilters({ categories, brands }: { categories: Cat[]; brands:
         </div>
       </div>
       <div className="space-y-2">
-        <label className="flex items-center gap-2">
+        <label className="tap flex items-center gap-2">
           <input type="checkbox" checked={sp.get("inStock") === "1"} onChange={(e) => set("inStock", e.target.checked ? "1" : undefined)} />
           In stock
         </label>
+        <label className="tap flex items-center gap-2">
+          <input type="checkbox" checked={sp.get("sale") === "1"} onChange={(e) => set("sale", e.target.checked ? "1" : undefined)} />
+          On sale
+        </label>
         <p className="text-[11px] uppercase tracking-[0.18em] text-muted">Rating</p>
         {[4, 3].map((r) => (
-          <button key={r} type="button" className="block" onClick={() => set("rating", sp.get("rating") === String(r) ? undefined : String(r))}>
+          <button key={r} type="button" className="tap block px-0" onClick={() => set("rating", sp.get("rating") === String(r) ? undefined : String(r))}>
             {r}+ stars {sp.get("rating") === String(r) ? "✓" : ""}
           </button>
         ))}
       </div>
-      <button type="button" className="text-[11px] uppercase tracking-widest underline" onClick={() => router.push("/shop")}>
+      <button type="button" className="tap text-[11px] uppercase tracking-widest underline" onClick={() => router.push("/shop")}>
         Clear all
       </button>
     </form>
@@ -206,10 +234,30 @@ export function ShopFilters({ categories, brands }: { categories: Cat[]; brands:
 
   return (
     <aside>
-      <button className="mb-4 border border-line px-3 py-2 text-[12px] uppercase tracking-widest lg:hidden" onClick={() => setOpen((v) => !v)}>
-        {open ? "Hide filters" : "Filters"}
+      <button
+        type="button"
+        className="tap mb-4 border border-line px-4 text-[12px] uppercase tracking-widest lg:hidden"
+        onClick={() => setOpen(true)}
+      >
+        Filter the rack
       </button>
-      <div className={`${open ? "block" : "hidden"} lg:block`}>{body}</div>
+
+      {open ? (
+        <div className="overlay-in fixed inset-0 z-50 lg:hidden">
+          <button type="button" className="absolute inset-0 bg-ink/40" aria-label="Close filters" onClick={() => setOpen(false)} />
+          <div className="filter-drawer relative h-full w-[min(100%,22rem)] overflow-y-auto border-r border-line bg-paper p-6">
+            <div className="mb-6 flex items-center justify-between">
+              <p className="font-serif text-2xl">Filter</p>
+              <button type="button" className="tap text-[12px] uppercase tracking-widest" onClick={() => setOpen(false)}>
+                Done
+              </button>
+            </div>
+            {body}
+          </div>
+        </div>
+      ) : null}
+
+      <div className="hidden lg:block">{body}</div>
     </aside>
   );
 }

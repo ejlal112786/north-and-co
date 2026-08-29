@@ -9,7 +9,7 @@ export default async function FaqPage() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-16">
       <Reveal>
-        <h1 className="font-serif text-5xl">FAQs</h1>
+        <h1 className="font-serif text-[clamp(2.8rem,7vw,5.5rem)] leading-[0.92]">FAQs</h1>
         <p className="mt-4 text-[15px] leading-relaxed text-[#3f3a34]">
           Guest checkout only — no customer accounts. Prices are US dollars. Rapid (cards, JazzCash, easypaisa,
           Raast) is charged in PKR and marked paid after Rapid confirms. Cash on delivery stays unpaid until the desk

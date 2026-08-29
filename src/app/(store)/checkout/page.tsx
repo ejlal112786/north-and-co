@@ -11,7 +11,7 @@ export default async function CheckoutPage() {
   if (!summary.items.length) redirect("/cart");
   return (
     <div className="mx-auto max-w-catalog px-4 py-10">
-      <h1 className="font-serif text-5xl">Guest checkout</h1>
+      <h1 className="font-serif text-[clamp(2.6rem,7vw,5rem)] leading-[0.92]">Guest checkout</h1>
       <p className="mt-2 max-w-xl text-sm text-muted">
         We do not create accounts. You will receive an order number and a private tracking link by email.
       </p>

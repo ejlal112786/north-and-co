@@ -32,7 +32,7 @@ export function QuickAdd({ variantId }: { variantId: string }) {
           setBusy(false);
         }
       }}
-      className="grid h-8 w-8 place-items-center bg-ink text-paper text-sm"
+      className="tap grid w-11 place-items-center bg-ink text-sm text-paper"
     >
       {busy ? "…" : "+"}
     </button>

@@ -43,10 +43,12 @@ export function CartView({ summary, currency }: { summary: Summary; currency: st
 
   if (!summary.items.length && !summary.savedForLater.length) {
     return (
-      <div className="mt-8 border border-line p-10">
-        <p className="font-serif text-2xl">The cart is empty.</p>
-        <Link href="/shop" className="mt-4 inline-block underline">
-          Continue browsing
+      <div className="mt-8 border border-line p-10 md:p-14">
+        <p className="text-[11px] uppercase tracking-[0.22em] text-muted">Cart</p>
+        <p className="mt-3 font-serif text-4xl">Nothing in the bag.</p>
+        <p className="mt-3 max-w-md text-sm text-muted">Guest checkout when you are ready. Stock is checked on the server, not guessed here.</p>
+        <Link href="/shop" className="link-underline mt-6 inline-flex min-h-[44px] items-center text-[12px] uppercase tracking-[0.16em]">
+          The shop
         </Link>
       </div>
     );
@@ -73,13 +75,13 @@ export function CartView({ summary, currency }: { summary: Summary; currency: st
                   min={1}
                   max={Math.max(1, i.available)}
                   defaultValue={i.quantity}
-                  className="w-16 border border-line bg-transparent px-2 py-1"
+                  className="tap w-16 border border-line bg-transparent px-2"
                   onBlur={(e) => patch(i.id, Number(e.target.value))}
                 />
-                <button onClick={() => patch(i.id, 0)} className="underline">
+                <button onClick={() => patch(i.id, 0)} className="tap underline">
                   Remove
                 </button>
-                <button onClick={() => patch(i.id, i.quantity, true)} className="underline">
+                <button onClick={() => patch(i.id, i.quantity, true)} className="tap underline">
                   Save for later
                 </button>
               </div>
@@ -117,9 +119,9 @@ export function CartView({ summary, currency }: { summary: Summary; currency: st
             value={code}
             onChange={(e) => setCode(e.target.value)}
             placeholder="Coupon"
-            className="flex-1 border border-line bg-transparent px-2 py-2 text-sm"
+            className="tap flex-1 border border-line bg-transparent px-2 text-sm"
           />
-          <button className="border border-ink px-3 text-[11px] uppercase tracking-widest">Apply</button>
+          <button className="tap border border-ink px-3 text-[11px] uppercase tracking-widest">Apply</button>
         </form>
         {err ? <p className="mt-2 text-xs text-sale">{err}</p> : null}
         {summary.couponCode && !err ? <p className="mt-2 text-xs text-sage">Applied {summary.couponCode}</p> : null}

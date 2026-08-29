@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SearchModal } from "./SearchModal";
+import { LOOKBOOKS } from "@/lib/lookbooks";
 
 type Item = { id: string; label: string; href: string };
 
@@ -32,6 +33,13 @@ export function HeaderBar({ items, initialCount }: { items: Item[]; initialCount
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   return (
     <>
       <a href="#main" className="skip-link">
@@ -49,7 +57,8 @@ export function HeaderBar({ items, initialCount }: { items: Item[]; initialCount
           className={`mx-auto flex max-w-catalog items-center justify-between gap-4 px-4 transition-all duration-500 ${scrolled ? "py-2" : "py-3 lg:py-4"}`}
         >
           <button
-            className="lg:hidden text-sm uppercase tracking-widest"
+            type="button"
+            className="tap px-1 text-sm uppercase tracking-widest lg:hidden"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
           >
@@ -65,50 +74,78 @@ export function HeaderBar({ items, initialCount }: { items: Item[]; initialCount
               </Link>
             ))}
           </nav>
-          <div className="flex items-center gap-4 text-[12px] uppercase tracking-[0.14em]">
-            <button type="button" onClick={() => setSearch(true)} className="hover:text-copper">
+          <div className="flex items-center gap-1 text-[12px] uppercase tracking-[0.14em] sm:gap-3">
+            <button type="button" onClick={() => setSearch(true)} className="tap px-2 hover:text-copper">
               Search
             </button>
-            <Link href="/wishlist" className="hidden sm:inline hover:text-copper">
+            <Link href="/wishlist" className="tap hidden items-center px-2 hover:text-copper sm:inline-flex">
               Wishlist
             </Link>
-            <Link href="/track" className="hidden sm:inline hover:text-copper">
+            <Link href="/track" className="tap hidden items-center px-2 hover:text-copper sm:inline-flex">
               Track
             </Link>
-            <Link href="/cart" className={`hover:text-copper ${count > 0 ? "cart-pop" : ""}`}>
+            <Link href="/cart" className={`tap inline-flex items-center px-2 hover:text-copper ${count > 0 ? "cart-pop" : ""}`}>
               Cart {count > 0 ? `(${count})` : ""}
             </Link>
           </div>
         </div>
-        <div className={`menu-panel lg:hidden ${open ? "is-open" : ""}`}>
-          <nav className="border-t border-line px-4 py-4">
-            <ul className="space-y-3 text-sm uppercase tracking-[0.16em]">
-              {items.map((i) => (
-                <li key={i.id}>
-                  <Link href={i.href} onClick={() => setOpen(false)}>
-                    {i.label}
+      </header>
+
+      {open ? (
+        <div className="overlay-in fixed inset-0 z-50 bg-paper lg:hidden">
+          <div className="flex items-center justify-between border-b border-line px-5 py-4">
+            <p className="font-serif text-xl">The book</p>
+            <button type="button" className="tap px-2 text-[12px] uppercase tracking-widest" onClick={() => setOpen(false)}>
+              Close
+            </button>
+          </div>
+          <div className="h-[calc(100%-57px)] overflow-y-auto">
+            {LOOKBOOKS.map((l) => (
+              <Link
+                key={l.slug}
+                href={`/lookbook/${l.slug}`}
+                onClick={() => setOpen(false)}
+                className="group relative block min-h-[28vh] overflow-hidden"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={l.image} alt="" className="photo-grade absolute inset-0 h-full w-full object-cover" />
+                <div className="absolute inset-0 bg-ink/40" />
+                <div className="relative z-10 flex min-h-[28vh] flex-col justify-end p-6 text-paper">
+                  <p className="text-[10px] uppercase tracking-[0.22em] text-paper/70">{l.kicker}</p>
+                  <h2 className="mt-2 font-serif text-4xl">{l.title}</h2>
+                </div>
+              </Link>
+            ))}
+            <nav className="px-6 py-8">
+              <ul className="space-y-1 text-sm uppercase tracking-[0.16em]">
+                {items.map((i) => (
+                  <li key={i.id}>
+                    <Link href={i.href} onClick={() => setOpen(false)} className="tap flex items-center">
+                      {i.label}
+                    </Link>
+                  </li>
+                ))}
+                <li>
+                  <Link href="/wishlist" onClick={() => setOpen(false)} className="tap flex items-center">
+                    Wishlist
                   </Link>
                 </li>
-              ))}
-              <li>
-                <Link href="/wishlist" onClick={() => setOpen(false)}>
-                  Wishlist
-                </Link>
-              </li>
-              <li>
-                <Link href="/track" onClick={() => setOpen(false)}>
-                  Track order
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" onClick={() => setOpen(false)}>
-                  Contact
-                </Link>
-              </li>
-            </ul>
-          </nav>
+                <li>
+                  <Link href="/track" onClick={() => setOpen(false)} className="tap flex items-center">
+                    Track order
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/contact" onClick={() => setOpen(false)} className="tap flex items-center">
+                    Contact
+                  </Link>
+                </li>
+              </ul>
+            </nav>
+          </div>
         </div>
-      </header>
+      ) : null}
+
       {search ? <SearchModal onClose={() => setSearch(false)} /> : null}
     </>
   );

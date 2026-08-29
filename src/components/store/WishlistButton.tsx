@@ -17,7 +17,7 @@ export function WishlistButton({ slug }: { slug: string }) {
         e.stopPropagation();
         setOn(toggleWishlist(slug).includes(slug));
       }}
-      className="grid h-8 w-8 place-items-center bg-paper/90 text-sm"
+      className="tap grid w-11 place-items-center bg-paper/90 text-sm"
     >
       {on ? "♥" : "♡"}
     </button>

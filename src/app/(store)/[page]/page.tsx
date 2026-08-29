@@ -37,7 +37,7 @@ export default async function CmsPage({ params }: { params: Promise<{ page: stri
   return (
     <article className="prose-store mx-auto max-w-2xl px-4 py-16">
       <Reveal>
-        <h1 className="font-serif text-5xl">{row.title}</h1>
+        <h1 className="font-serif text-[clamp(2.8rem,7vw,5.5rem)] leading-[0.92]">{row.title}</h1>
         <CmsBody content={row.content} />
       </Reveal>
     </article>

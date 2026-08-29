@@ -10,6 +10,7 @@ import { RecordView } from "@/components/store/RecordView";
 import { parseJson } from "@/lib/utils";
 import { prisma } from "@/lib/prisma";
 import { getSettings } from "@/lib/settings";
+import { wornWith } from "@/lib/lookbooks";
 import type { Metadata } from "next";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -34,7 +35,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const fbt = product.relationsFrom.filter((r) => r.kind === "fbt").map((r) => r.related);
   const more = related.length
     ? related
-    : (await searchProducts({ category: product.category?.slug, pageSize: 4 })).products.filter((p) => p.slug !== slug);
+    : (await searchProducts({ category: product.category?.slug, pageSize: 12 })).products.filter((p) => p.slug !== slug);
   const specs = parseJson<{ label: string; value: string }[]>(product.specifications, []);
   const ratings = product.reviews.map((r) => r.rating);
   const avg = ratings.length ? ratings.reduce((a, b) => a + b, 0) / ratings.length : 0;
@@ -43,9 +44,21 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     c: ratings.filter((r) => r === n).length,
   }));
 
-  await prisma.analyticsEvent.create({
-    data: { type: "product_view", path: `/product/${slug}`, meta: JSON.stringify({ slug }) },
-  }).catch(() => null);
+  const wornNotes = wornWith(slug);
+  const wornRows = (
+    await Promise.all(
+      wornNotes.map(async (w) => ({
+        note: w.note,
+        product: await getProductBySlug(w.slug),
+      }))
+    )
+  ).filter((r): r is { note: string; product: NonNullable<typeof r.product> } => !!r.product);
+
+  await prisma.analyticsEvent
+    .create({
+      data: { type: "product_view", path: `/product/${slug}`, meta: JSON.stringify({ slug }) },
+    })
+    .catch(() => null);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -69,11 +82,15 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       : undefined,
   };
 
+  const closeUp = product.images[2] || product.images[1] || product.images[0];
+  const clothSpec = specs.find((s) => /fabric|cloth|material|composition|fibre|fiber/i.test(s.label));
+  const careSpec = specs.find((s) => /care|wash/i.test(s.label));
+
   return (
-    <div className="mx-auto max-w-catalog px-4 py-10">
+    <div className="mx-auto max-w-catalog pb-24 md:px-4 md:py-10">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <RecordView slug={product.slug} />
-      <nav className="text-[12px] uppercase tracking-widest text-muted">
+      <nav className="px-5 pt-6 text-[12px] uppercase tracking-widest text-muted md:px-0 md:pt-0">
         <Link href="/">Home</Link>
         {product.category ? (
           <>
@@ -86,10 +103,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       </nav>
       <div className="mt-6 grid gap-10 lg:grid-cols-2">
         <ProductGallery images={product.images} videoUrl={product.videoUrl} name={product.name} />
-        <div>
+        <div className="px-5 md:px-0">
           <p className="text-[11px] uppercase tracking-[0.18em] text-muted">{product.brand?.name}</p>
-          <h1 className="mt-2 font-serif text-4xl sm:text-5xl">{product.name}</h1>
-          <p className="mt-3 text-muted">{product.shortDescription}</p>
+          <h1 className="mt-2 font-serif text-[clamp(2.4rem,5vw,4.2rem)] leading-[0.95]">{product.name}</h1>
+          <p className="mt-4 max-w-md text-[15px] leading-relaxed text-muted">{product.shortDescription}</p>
           <ProductBuyBox
             product={{
               id: product.id,
@@ -111,8 +128,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             currency={settings.store.currency}
             avg={avg}
             reviewCount={ratings.length}
+            image={product.images[0]?.url}
           />
-          <div className="mt-8 space-y-3 text-sm leading-relaxed text-[#3f3a34]">
+          <div className="mt-10 space-y-4 text-[15px] leading-relaxed text-[#3f3a34]">
             {product.description.split("\n").map((para, i) => (
               <p key={i}>{para}</p>
             ))}
@@ -160,10 +178,58 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         </div>
       </div>
 
-      {fbt.length ? (
-        <section className="mt-20">
-          <h2 className="font-serif text-3xl">Frequently bought together</h2>
-          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+      {closeUp ? (
+        <section className="mt-20 grid items-stretch gap-0 md:grid-cols-2">
+          <div className="aspect-[4/5] overflow-hidden bg-bone md:aspect-auto">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={closeUp.url} alt={closeUp.alt || `${product.name} cloth`} className="photo-grade h-full w-full object-cover" />
+          </div>
+          <div className="flex flex-col justify-center bg-mist px-6 py-12 md:px-12">
+            <p className="text-[11px] uppercase tracking-[0.22em] text-muted">The cloth</p>
+            <h2 className="mt-3 font-serif text-4xl md:text-5xl">Fabric, close</h2>
+            <p className="mt-5 max-w-md text-[15px] leading-relaxed text-[#3f3a34]">
+              {clothSpec
+                ? `${clothSpec.value}. This is the stuff the garment is made of — not a mood. If a later season changes the mill, we will change this line.`
+                : product.shortDescription ||
+                  "A close look at the cloth. We photograph a third angle when we have it so you can see the hand, not just the silhouette."}
+            </p>
+            {careSpec ? <p className="mt-4 text-sm text-muted">Care · {careSpec.value}</p> : null}
+            {specs
+              .filter((s) => !/fabric|cloth|material|composition|fibre|fiber|care|wash/i.test(s.label))
+              .slice(0, 4)
+              .map((s) => (
+                <p key={s.label} className="mt-2 text-sm text-muted">
+                  {s.label} · {s.value}
+                </p>
+              ))}
+          </div>
+        </section>
+      ) : null}
+
+      {wornRows.length ? (
+        <section className="mt-20 px-5 md:px-0">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.22em] text-muted">Styled in the book</p>
+              <h2 className="mt-2 font-serif text-4xl md:text-5xl">Worn with</h2>
+            </div>
+            <Link href="/lookbook" className="link-underline hidden text-[11px] uppercase tracking-[0.16em] md:inline">
+              Lookbooks
+            </Link>
+          </div>
+          <div className="-mx-5 mt-8 flex snap-x snap-mandatory gap-0 overflow-x-auto sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-8 sm:overflow-visible md:grid-cols-4">
+            {wornRows.map(({ note, product: p }, i) => (
+              <div key={p.id} className="w-[78vw] shrink-0 snap-start sm:w-auto">
+                <p className="mb-2 px-5 text-[11px] uppercase tracking-widest text-muted sm:px-0">{note}</p>
+                <ProductCard product={toCard(p)} currency={settings.store.currency} index={i} />
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : fbt.length ? (
+        <section className="mt-20 px-5 md:px-0">
+          <h2 className="font-serif text-4xl">Frequently bought together</h2>
+          <div className="mt-6 grid grid-cols-1 gap-0 sm:grid-cols-2 sm:gap-4 md:grid-cols-4">
             {fbt.map((p) => (
               <ProductCard
                 key={p.id}
@@ -185,23 +251,20 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         </section>
       ) : null}
 
-      <ProductReviews
-        slug={product.slug}
-        reviews={product.reviews}
-        avg={avg}
-        breakdown={breakdown}
-      />
+      <div className="px-5 md:px-0">
+        <ProductReviews slug={product.slug} reviews={product.reviews} avg={avg} breakdown={breakdown} />
+      </div>
 
-      <section className="mt-20">
-        <h2 className="font-serif text-3xl">Related</h2>
-        <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+      <section className="mt-20 px-5 md:px-0">
+        <h2 className="font-serif text-4xl">Related</h2>
+        <div className="mt-6 grid grid-cols-1 gap-0 sm:grid-cols-2 sm:gap-4 md:grid-cols-4">
           {more.slice(0, 4).map((p) => {
-            const slug = p.slug;
+            const s = p.slug;
             return (
               <ProductCard
-                key={slug}
+                key={s}
                 product={toCard({
-                  slug,
+                  slug: s,
                   name: p.name,
                   images: p.images,
                   variants: p.variants.map((v) => ({

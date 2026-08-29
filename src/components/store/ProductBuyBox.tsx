@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatMoney, discountPercent } from "@/lib/money";
 import { Stars } from "./Stars";
@@ -29,6 +29,7 @@ export function ProductBuyBox({
   currency,
   avg,
   reviewCount,
+  image,
 }: {
   product: {
     id: string;
@@ -41,6 +42,7 @@ export function ProductBuyBox({
   currency: string;
   avg: number;
   reviewCount: number;
+  image?: string;
 }) {
   const router = useRouter();
   const [color, setColor] = useState(product.colors[0] || "");
@@ -48,6 +50,8 @@ export function ProductBuyBox({
   const [qty, setQty] = useState(1);
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
+  const [pin, setPin] = useState(false);
+  const buyRef = useRef<HTMLDivElement>(null);
 
   const variant = useMemo(() => {
     return (
@@ -59,6 +63,14 @@ export function ProductBuyBox({
       }) || product.variants[0]
     );
   }, [product, color, size]);
+
+  useEffect(() => {
+    const el = buyRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setPin(!e.isIntersecting), { threshold: 0.15 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   if (!variant) return <p>Unavailable.</p>;
   const avail = availableQty(variant.stockQty, variant.reservedQty);
@@ -94,10 +106,13 @@ export function ProductBuyBox({
     }
   }
 
+  const stockLine =
+    avail <= 0 ? "Out of stock" : avail <= 5 ? `${avail} left · live stock` : "In stock · live from the server";
+
   return (
     <div className="mt-6">
       <div className="flex items-baseline gap-3">
-        <p className="text-2xl">{formatMoney(variant.priceCents, currency)}</p>
+        <p className="font-serif text-3xl">{formatMoney(variant.priceCents, currency)}</p>
         {variant.compareAtCents && variant.compareAtCents > variant.priceCents ? (
           <p className="text-muted line-through">{formatMoney(variant.compareAtCents, currency)}</p>
         ) : null}
@@ -109,32 +124,36 @@ export function ProductBuyBox({
         </a>
       ) : null}
       <p className="mt-2 text-xs text-muted">SKU {variant.sku}</p>
-      <p className={`mt-2 text-sm ${avail <= 0 ? "text-sale" : avail <= 5 ? "text-copper" : "text-sage"}`}>
-        {avail <= 0 ? "Out of stock" : avail <= 5 ? `${avail} left` : "In stock"}
-      </p>
+      <p className={`mt-2 text-sm ${avail <= 0 ? "text-sale" : avail <= 5 ? "text-copper" : "text-sage"}`}>{stockLine}</p>
 
       {product.colors.length ? (
-        <div className="mt-6">
+        <div className="mt-8">
           <p className="text-[11px] uppercase tracking-widest text-muted">Color — {color}</p>
-          <div className="mt-2 flex flex-wrap items-center gap-2">
+          <div className="mt-3 flex flex-wrap items-center gap-3">
             {product.colors.map((c) => (
               <button
                 key={c}
                 type="button"
                 onClick={() => setColor(c)}
                 title={c}
-                className={`h-8 w-8 rounded-full border ${c === color ? "border-ink ring-1 ring-ink" : "border-line"}`}
-                style={{ background: swatchHex(c) }}
+                className={`tap flex items-center gap-2 pr-3 ${c === color ? "text-ink" : "text-muted"}`}
                 aria-label={c}
-              />
+                aria-pressed={c === color}
+              >
+                <span
+                  className={`block h-11 w-11 rounded-full border ${c === color ? "border-ink ring-1 ring-ink ring-offset-2 ring-offset-paper" : "border-line"}`}
+                  style={{ background: swatchHex(c) }}
+                />
+                <span className="text-[12px] uppercase tracking-[0.12em]">{c}</span>
+              </button>
             ))}
           </div>
         </div>
       ) : null}
       {product.sizes.length ? (
-        <div className="mt-4">
+        <div className="mt-6">
           <p className="text-[11px] uppercase tracking-widest text-muted">Size — {size}</p>
-          <div className="mt-2 flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap gap-2">
             {product.sizes.map((s) => {
               const exists = product.variants.some((v) => {
                 const o = parseJson<{ size?: string; color?: string }>(v.options, {});
@@ -151,7 +170,7 @@ export function ProductBuyBox({
                   type="button"
                   disabled={!exists || a <= 0}
                   onClick={() => setSize(s)}
-                  className={`border px-3 py-1 text-sm disabled:opacity-30 ${s === size ? "border-ink bg-ink text-paper" : "border-line"}`}
+                  className={`tap min-w-[44px] border px-3 text-sm disabled:opacity-30 ${s === size ? "border-ink bg-ink text-paper" : "border-line"}`}
                 >
                   {s}
                 </button>
@@ -170,27 +189,53 @@ export function ProductBuyBox({
           max={Math.max(1, avail)}
           value={qty}
           onChange={(e) => setQty(Math.max(1, Number(e.target.value)))}
-          className="w-16 border border-line bg-transparent px-2 py-2 text-center"
+          className="tap w-16 border border-line bg-transparent px-2 text-center"
         />
       </div>
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div ref={buyRef} className="mt-4 flex flex-wrap gap-2">
         <button
           disabled={busy || avail <= 0}
           onClick={() => add(false)}
-          className="bg-ink px-6 py-3 text-[12px] uppercase tracking-[0.16em] text-paper disabled:opacity-40"
+          className="tap bg-ink px-6 text-[12px] uppercase tracking-[0.16em] text-paper disabled:opacity-40"
         >
           Add to cart
         </button>
         <button
           disabled={busy || avail <= 0}
           onClick={() => add(true)}
-          className="border border-ink px-6 py-3 text-[12px] uppercase tracking-[0.16em] disabled:opacity-40"
+          className="tap border border-ink px-6 text-[12px] uppercase tracking-[0.16em] disabled:opacity-40"
         >
           Buy now
         </button>
         <WishlistButton slug={product.slug} />
       </div>
       {msg ? <p className="mt-3 text-sm">{msg}</p> : null}
+
+      {pin ? (
+        <div className="sticky-buy no-print fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper/95 backdrop-blur">
+          <div className="mx-auto flex max-w-catalog items-center gap-3 px-4 py-3">
+            {image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={image} alt="" className="hidden h-12 w-10 object-cover sm:block" />
+            ) : null}
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-serif text-lg leading-tight">{product.name}</p>
+              <p className="text-xs text-muted">
+                {formatMoney(variant.priceCents, currency)}
+                {size ? ` · ${size}` : ""}
+                {color ? ` · ${color}` : ""} · {stockLine}
+              </p>
+            </div>
+            <button
+              disabled={busy || avail <= 0}
+              onClick={() => add(false)}
+              className="tap shrink-0 bg-ink px-5 text-[11px] uppercase tracking-[0.16em] text-paper disabled:opacity-40"
+            >
+              Add
+            </button>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

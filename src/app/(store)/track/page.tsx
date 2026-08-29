@@ -11,7 +11,7 @@ export default function TrackPage() {
   return (
     <div className="mx-auto max-w-md px-4 py-16">
       <Reveal>
-        <h1 className="font-serif text-4xl">Track an order</h1>
+        <h1 className="font-serif text-[clamp(2.6rem,7vw,4.8rem)] leading-[0.92]">Track an order</h1>
         <p className="mt-4 text-[15px] leading-relaxed text-[#3f3a34]">
           Enter the order number and the email used at checkout. We only show that order. You will see the status the
           desk has recorded, whether Rapid or COD is paid, and a tracking number if we have added a carrier. We do not

@@ -9,7 +9,7 @@ export default function ContactPage() {
   return (
     <div className="mx-auto max-w-lg px-4 py-16">
       <Reveal>
-        <h1 className="font-serif text-5xl">Contact</h1>
+        <h1 className="font-serif text-[clamp(2.8rem,7vw,5.5rem)] leading-[0.92]">Contact</h1>
         <p className="mt-4 text-[15px] leading-relaxed text-[#3f3a34]">
           Every message is stored for the desk. When SMTP is set on the server, a copy is emailed to{" "}
           <strong>spideyspider112786@gmail.com</strong>. That is the inbox. There is no phone number and no street
@@ -58,11 +58,11 @@ export default function ContactPage() {
           if (res.ok) e.currentTarget.reset();
         }}
       >
-        <input name="name" required placeholder="Name" className="border border-line bg-transparent px-3 py-2" />
-        <input name="email" type="email" required placeholder="Email" className="border border-line bg-transparent px-3 py-2" />
-        <input name="phone" placeholder="Phone (optional)" className="border border-line bg-transparent px-3 py-2" />
-        <textarea name="message" required rows={6} placeholder="Message — include the order number if you have one" className="border border-line bg-transparent px-3 py-2" />
-        <button className="bg-ink py-3 text-[12px] uppercase tracking-widest text-paper">Send</button>
+        <input name="name" required placeholder="Name" className="tap border border-line bg-transparent px-3" />
+        <input name="email" type="email" required placeholder="Email" className="tap border border-line bg-transparent px-3" />
+        <input name="phone" placeholder="Phone (optional)" className="tap border border-line bg-transparent px-3" />
+        <textarea name="message" required rows={6} placeholder="Message — include the order number if you have one" className="border border-line bg-transparent px-3 py-3" />
+        <button className="tap bg-ink text-[12px] uppercase tracking-widest text-paper">Send</button>
         {msg ? <p className="text-sm">{msg}</p> : null}
       </form>
       <p className="mt-8 text-xs leading-relaxed text-muted">

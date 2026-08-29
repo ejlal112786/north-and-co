@@ -35,7 +35,7 @@ export function SizeGuide({ sizes }: { sizes: string[] }) {
 
   return (
     <div className="mt-4">
-      <button type="button" className="text-[11px] uppercase tracking-widest underline" onClick={() => setOpen((v) => !v)}>
+      <button type="button" className="tap text-[11px] uppercase tracking-widest underline" onClick={() => setOpen((v) => !v)}>
         {open ? "Hide size helper" : "Size helper"}
       </button>
       {open ? (
@@ -47,7 +47,7 @@ export function SizeGuide({ sizes }: { sizes: string[] }) {
               <input
                 value={fit.heightCm}
                 onChange={(e) => save({ ...fit, heightCm: e.target.value })}
-                className="mt-1 w-full border border-line bg-paper px-2 py-1 text-sm text-ink"
+                className="tap mt-1 w-full border border-line bg-paper px-2 text-sm text-ink"
                 inputMode="numeric"
                 placeholder="178"
               />
@@ -57,7 +57,7 @@ export function SizeGuide({ sizes }: { sizes: string[] }) {
               <input
                 value={fit.usual}
                 onChange={(e) => save({ ...fit, usual: e.target.value })}
-                className="mt-1 w-full border border-line bg-paper px-2 py-1 text-sm text-ink"
+                className="tap mt-1 w-full border border-line bg-paper px-2 text-sm text-ink"
                 placeholder="M"
               />
             </label>

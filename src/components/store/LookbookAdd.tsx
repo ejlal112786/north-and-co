@@ -38,7 +38,7 @@ export function LookbookAdd({ variantIds }: { variantIds: string[] }) {
         type="button"
         disabled={busy}
         onClick={add}
-        className="bg-paper px-6 py-3 text-[12px] uppercase tracking-[0.16em] text-ink disabled:opacity-40"
+        className="tap bg-paper px-6 text-[12px] uppercase tracking-[0.16em] text-ink disabled:opacity-40"
       >
         {busy ? "Adding…" : "Add the look to cart"}
       </button>

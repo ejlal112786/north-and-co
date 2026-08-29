@@ -24,6 +24,11 @@ const MAP: Record<string, string> = {
   Tortoise: "#6b3f24",
   Steel: "#8a8d91",
   Hudson: "#4a5c6a",
+  Indigo: "#2c3a5a",
+  Stone: "#b7aea0",
+  Ivory: "#f3eadc",
+  Khaki: "#9a8b63",
+  Washed: "#8a9aa8",
 };
 
 export function swatchHex(color: string) {

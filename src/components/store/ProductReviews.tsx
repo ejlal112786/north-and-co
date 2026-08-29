@@ -31,7 +31,7 @@ export function ProductReviews({
 
   return (
     <section id="reviews" className="mt-20 border-t border-line pt-10">
-      <h2 className="font-serif text-3xl">Reviews</h2>
+      <h2 className="font-serif text-4xl md:text-5xl">Reviews</h2>
       <div className="mt-4 flex flex-wrap items-center gap-6">
         <p className="font-serif text-5xl">{avg ? avg.toFixed(1) : "—"}</p>
         <div>
@@ -108,10 +108,10 @@ export function ProductReviews({
       >
         <h3 className="font-serif text-2xl">Write a review</h3>
         <p className="text-xs text-muted">Published after moderation. Include an order number for a verified badge.</p>
-        <input name="authorName" required placeholder="Name" className="border border-line bg-transparent px-3 py-2" />
-        <input name="authorEmail" type="email" required placeholder="Email" className="border border-line bg-transparent px-3 py-2" />
-        <input name="orderNumber" placeholder="Order number (optional)" className="border border-line bg-transparent px-3 py-2" />
-        <select name="rating" className="border border-line bg-paper px-3 py-2" defaultValue="5">
+        <input name="authorName" required placeholder="Name" className="tap border border-line bg-transparent px-3" />
+        <input name="authorEmail" type="email" required placeholder="Email" className="tap border border-line bg-transparent px-3" />
+        <input name="orderNumber" placeholder="Order number (optional)" className="tap border border-line bg-transparent px-3" />
+        <select name="rating" className="tap border border-line bg-paper px-3" defaultValue="5">
           {[5, 4, 3, 2, 1].map((n) => (
             <option key={n} value={n}>
               {n} stars
@@ -120,7 +120,7 @@ export function ProductReviews({
         </select>
         <input name="title" placeholder="Title" className="border border-line bg-transparent px-3 py-2" />
         <textarea name="body" required minLength={10} rows={4} placeholder="How did it wear / hold up?" className="border border-line bg-transparent px-3 py-2" />
-        <button className="justify-self-start bg-ink px-5 py-2 text-[12px] uppercase tracking-widest text-paper">
+        <button className="tap justify-self-start bg-ink px-5 text-[12px] uppercase tracking-widest text-paper">
           Submit
         </button>
         {msg ? <p className="text-sm">{msg}</p> : null}
