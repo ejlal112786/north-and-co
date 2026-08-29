@@ -23,7 +23,7 @@ export type CardProduct = {
 export function ProductCard({ product, currency = "usd" }: { product: CardProduct; currency?: string }) {
   const sale = discountPercent(product.minPrice, product.compareAt);
   return (
-    <article className="group relative">
+    <article className="card-rise group relative">
       <Link href={`/product/${product.slug}`} className="block">
         <div className="relative aspect-[4/5] overflow-hidden bg-bone">
           {/* eslint-disable-next-line @next/next/no-img-element */}

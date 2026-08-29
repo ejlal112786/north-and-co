@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { CmsBody } from "@/lib/cms";
+import { Reveal } from "@/components/store/Reveal";
 
 const RESERVED = new Set([
   "shop",
@@ -35,8 +36,10 @@ export default async function CmsPage({ params }: { params: Promise<{ page: stri
   if (!row) notFound();
   return (
     <article className="prose-store mx-auto max-w-2xl px-4 py-16">
-      <h1 className="font-serif text-5xl">{row.title}</h1>
-      <CmsBody content={row.content} />
+      <Reveal>
+        <h1 className="font-serif text-5xl">{row.title}</h1>
+        <CmsBody content={row.content} />
+      </Reveal>
     </article>
   );
 }

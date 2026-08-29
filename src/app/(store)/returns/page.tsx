@@ -7,9 +7,27 @@ export default function ReturnsPage() {
   return (
     <div className="mx-auto max-w-lg px-4 py-16">
       <h1 className="font-serif text-5xl">Returns</h1>
-      <p className="mt-3 text-sm text-muted">
-        30 days from delivery, unused, tags on. We approve or write back within two business days — we do not
-        auto-refund outside policy. Rapid refunds go to the original payment; COD refunds are arranged by the desk.
+      <p className="mt-4 text-[15px] leading-relaxed text-[#3f3a34]">
+        30 days from delivery. Unused, unwashed, tags on, original packing. Sale pieces marked final sale cannot be
+        returned except for faults. We approve or write back within two business days — submitting this form is not an
+        automatic refund.
+      </p>
+      <p className="mt-3 text-sm leading-relaxed text-muted">
+        Rapid / card refunds go to the original payment when Rapid accepts them. COD refunds are arranged by the desk
+        (bank transfer or credit) after we have the goods. You need the order number and the checkout email — no
+        account. More:{" "}
+        <a href="/shipping" className="underline">
+          Shipping
+        </a>
+        ,{" "}
+        <a href="/faq" className="underline">
+          FAQs
+        </a>
+        ,{" "}
+        <a href="/contact" className="underline">
+          Contact
+        </a>
+        .
       </p>
       <form
         className="mt-8 grid gap-3"
